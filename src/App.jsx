@@ -197,12 +197,12 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-4 relative overflow-x-hidden">
+    <div className="min-h-screen text-slate-800 flex flex-col items-center justify-center p-3 sm:p-4 relative overflow-x-hidden">
       {/* Pink Eyes Emoji Pattern Background (from user reference) */}
       <EyesBackground />
 
       {/* Top Header with discreet shield for admin only */}
-      <header className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-40 max-w-5xl mx-auto w-full">
+      <header className="fixed top-0 left-0 right-0 p-3 sm:p-4 flex justify-between items-center z-40 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/85 backdrop-blur-md shadow-sm border border-pink-200 text-xs font-semibold text-pink-700">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>Hangout Invitation</span>
@@ -219,12 +219,12 @@ export default function App() {
         </button>
       </header>
 
-      {/* Main Glass Card */}
-      <main className="w-full max-w-lg mx-auto z-10 relative pt-12 pb-8">
-        <div className="glass-card rounded-3xl p-6 md:p-8 shadow-2xl border border-white/90 relative overflow-hidden transition-all duration-500">
+      {/* Main Glass Card (100% responsive on all mobile widths) */}
+      <main className="w-full max-w-lg mx-auto z-10 relative pt-12 pb-6 px-1">
+        <div className="glass-card rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 shadow-2xl border border-white/90 relative overflow-hidden transition-all duration-500">
           {/* Progress Bar (Visible in steps 2, 3, 4) */}
           {step >= 2 && step <= 4 && (
-            <div className="mb-6 animate-scale-in">
+            <div className="mb-5 sm:mb-6 animate-scale-in">
               <div className="flex justify-between items-center text-xs font-semibold text-pink-600 mb-2">
                 <span>{progressLabels[step]?.label}</span>
                 <span>{progressLabels[step]?.pct}%</span>
@@ -292,7 +292,7 @@ export default function App() {
           )}
         </div>
 
-        <p className="text-center text-slate-700 font-medium text-xs mt-6 bg-white/60 backdrop-blur-sm py-1 px-3 rounded-full w-fit mx-auto shadow-sm border border-pink-100">
+        <p className="text-center text-slate-700 font-medium text-[11px] sm:text-xs mt-4 sm:mt-6 bg-white/60 backdrop-blur-sm py-1 px-3 rounded-full w-fit mx-auto shadow-sm border border-pink-100">
           Ready for a fun time outside ✨
         </p>
       </main>
