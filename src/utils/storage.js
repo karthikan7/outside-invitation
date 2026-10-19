@@ -9,7 +9,7 @@ export const STORAGE_KEYS = {
 export const defaultSettings = {
   herName: '',
   adminPin: '1234',
-  whatsAppNumber: '',
+  whatsAppNumber: '917760718421',
   webhookUrl: ''
 };
 
