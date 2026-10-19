@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Compass, Sparkles } from 'lucide-react';
 
 const playfulNoMessages = [
@@ -7,67 +7,42 @@ const playfulNoMessages = [
   "Think again! 😉",
   "Wait! 🏃‍♂️",
   "Almost got it!",
-  "Error 404: Can't click! 😅",
   "Try the other one! 👉",
   "Come on, it'll be fun! 🙌",
-  "You can't catch me! 💨",
-  "Over here! 😜",
-  "Too fast! 🚀",
-  "Nope, try again! 🏃💨"
+  "Nope! 😜",
+  "Try again! 💨"
 ];
 
 export default function Step1BigQuestion({ recipientName, onYes, onDodge }) {
   const [dodgeCount, setDodgeCount] = useState(0);
-  const [isFullFlying, setIsFullFlying] = useState(false);
-  const [noPosition, setNoPosition] = useState({ x: 0, y: 0 });
-  const noBtnRef = useRef(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const arenaRef = useRef(null);
 
-  // Function to move 'No' button anywhere across the entire browser viewport
-  const moveNoToRandomScreenPos = (e) => {
+  // Playfully dodge inside the card button arena so it stays 100% visible
+  const handleDodge = (e) => {
     const nextCount = dodgeCount + 1;
     setDodgeCount(nextCount);
     onDodge(nextCount);
 
-    const btnWidth = 140;
-    const btnHeight = 60;
-    const pad = 30;
+    if (arenaRef.current) {
+      const arena = arenaRef.current.getBoundingClientRect();
+      // Keep strictly within container bounds
+      const maxX = Math.max(15, arena.width / 2 - 65);
+      const maxY = Math.max(10, arena.height / 2 - 25);
 
-    const maxX = Math.max(pad, window.innerWidth - btnWidth - pad);
-    const maxY = Math.max(pad, window.innerHeight - btnHeight - pad);
+      const randomX = (Math.random() - 0.5) * (maxX * 1.8);
+      const randomY = (Math.random() - 0.5) * (maxY * 1.6);
 
-    const randomX = Math.floor(Math.random() * (maxX - pad)) + pad;
-    const randomY = Math.floor(Math.random() * (maxY - pad)) + pad;
-
-    setIsFullFlying(true);
-    setNoPosition({ x: randomX, y: randomY });
+      setPosition({ x: randomX, y: randomY });
+    }
 
     if (e && e.cancelable && e.type === 'touchstart') {
       e.preventDefault();
     }
   };
 
-  // Window proximity listener: if mouse gets within 120px of the 'No' button, it instantly leaps away!
-  useEffect(() => {
-    const handleGlobalMouseMove = (e) => {
-      if (!noBtnRef.current) return;
-      const rect = noBtnRef.current.getBoundingClientRect();
-      const btnCenterX = rect.left + rect.width / 2;
-      const btnCenterY = rect.top + rect.height / 2;
-
-      const dist = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
-
-      // If mouse is within 110px of the button, trigger the runaway dodge!
-      if (dist < 110) {
-        moveNoToRandomScreenPos(e);
-      }
-    };
-
-    window.addEventListener('mousemove', handleGlobalMouseMove);
-    return () => window.removeEventListener('mousemove', handleGlobalMouseMove);
-  }, [dodgeCount]);
-
   const currentNoMsg = playfulNoMessages[dodgeCount % playfulNoMessages.length];
-  const yesScale = Math.min(1.4, 1 + dodgeCount * 0.04);
+  const yesScale = Math.min(1.3, 1 + dodgeCount * 0.035);
   const greeting = recipientName ? `Hey ${recipientName}!` : "Hey there!";
 
   return (
@@ -83,12 +58,15 @@ export default function Step1BigQuestion({ recipientName, onYes, onDodge }) {
         </div>
       </div>
 
-      <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug mb-8">
+      <h1 className="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug mb-6">
         {greeting} Want to hang out outside?
       </h1>
 
-      {/* Button Arena (Yes Button centered) */}
-      <div className="relative min-h-[90px] flex items-center justify-center gap-4 mb-3">
+      {/* Button Arena (Both buttons contained safely inside the box) */}
+      <div
+        ref={arenaRef}
+        className="relative min-h-[140px] flex items-center justify-center gap-4 mb-2 overflow-hidden rounded-2xl p-4 bg-white/40 border border-white/60"
+      >
         {/* YES BUTTON */}
         <button
           type="button"
@@ -100,49 +78,30 @@ export default function Step1BigQuestion({ recipientName, onYes, onDodge }) {
           <span className="text-xl group-hover:scale-125 transition-transform duration-300">🙌</span>
         </button>
 
-        {/* IN-CARD PLACEHOLDER FOR NO (before first runaway trigger) */}
-        {!isFullFlying && (
-          <button
-            ref={noBtnRef}
-            type="button"
-            onMouseEnter={moveNoToRandomScreenPos}
-            onTouchStart={moveNoToRandomScreenPos}
-            onClick={moveNoToRandomScreenPos}
-            className="px-6 py-3 rounded-2xl bg-white/95 text-slate-700 font-semibold text-base shadow-sm border border-slate-200 select-none z-10 transition-all cursor-pointer"
-          >
-            <span>{currentNoMsg}</span>
-          </button>
-        )}
-      </div>
-
-      {/* FULL-SCREEN RUNAWAY 'NO' BUTTON (Moves anywhere across 100% of the browser window!) */}
-      {isFullFlying && (
+        {/* NO BUTTON (Dodges smoothly inside the arena box without disappearing) */}
         <button
-          ref={noBtnRef}
           type="button"
-          onMouseEnter={moveNoToRandomScreenPos}
-          onTouchStart={moveNoToRandomScreenPos}
-          onClick={moveNoToRandomScreenPos}
+          onMouseEnter={handleDodge}
+          onMouseMove={handleDodge}
+          onTouchStart={handleDodge}
+          onClick={handleDodge}
           style={{
-            position: 'fixed',
-            left: `${noPosition.x}px`,
-            top: `${noPosition.y}px`,
-            zIndex: 99999,
-            transition: 'left 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)'
+            transform: `translate(${position.x}px, ${position.y}px)`,
+            transition: 'transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)'
           }}
-          className="px-6 py-3 rounded-2xl bg-white text-slate-800 font-bold text-base shadow-2xl border-2 border-pink-400 select-none cursor-pointer hover:bg-pink-50 active:scale-95 animate-bounce-slow"
+          className="px-6 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 font-semibold text-base shadow-sm border border-slate-200 select-none z-10 transition-all cursor-pointer whitespace-nowrap"
         >
           <span>{currentNoMsg}</span>
         </button>
-      )}
+      </div>
 
       {/* Playful Notice */}
       <p
-        className={`text-xs text-pink-600 font-medium mt-4 h-5 transition-opacity duration-300 ${
+        className={`text-xs text-pink-600 font-medium mt-3 h-5 transition-opacity duration-300 ${
           dodgeCount >= 2 ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        "No" is zooming across your entire screen! 🏃‍♂️💨
+        "No" is feeling a bit fast today! 🏃‍♂️💨
       </p>
     </section>
   );

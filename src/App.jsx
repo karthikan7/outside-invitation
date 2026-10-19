@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { ShieldCheck, BarChart3 } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 
 import EyesBackground from './components/EyesBackground';
 import Step0Disclaimer from './components/Step0Disclaimer';
@@ -201,19 +201,19 @@ export default function App() {
       {/* Pink Eyes Emoji Pattern Background (from user reference) */}
       <EyesBackground />
 
-      {/* Top Header */}
+      {/* Top Header with discreet shield for admin only */}
       <header className="fixed top-0 left-0 right-0 p-4 flex justify-between items-center z-40 max-w-5xl mx-auto w-full">
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/85 backdrop-blur-md shadow-sm border border-pink-200 text-xs font-semibold text-pink-700">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span>Hangout Invitation</span>
         </div>
 
-        {/* Secret Admin Button */}
+        {/* Discreet Admin Shield (only admin knows to click or press Shift+A) */}
         <button
           type="button"
           onClick={() => setIsAdminOpen(true)}
-          title="Admin Portal (or press Shift + A)"
-          className="text-slate-500 hover:text-pink-600 transition-colors p-2 rounded-full hover:bg-white/90 backdrop-blur-sm shadow-sm border border-pink-100"
+          title="Admin"
+          className="text-slate-400 hover:text-pink-600 transition-colors p-2 rounded-full hover:bg-white/80 backdrop-blur-sm"
         >
           <ShieldCheck className="w-4 h-4" />
         </button>
@@ -243,7 +243,7 @@ export default function App() {
             <Step0Disclaimer onProceed={handleDisclaimerProceed} />
           )}
 
-          {/* STEP 1: BIG QUESTION (YES & FULL-SCREEN RUNAWAY NO) */}
+          {/* STEP 1: BIG QUESTION (YES & NO IN BOX) */}
           {step === 1 && (
             <Step1BigQuestion
               recipientName={settings.herName}
@@ -292,20 +292,9 @@ export default function App() {
           )}
         </div>
 
-        {/* Quick Admin & Analytics Button */}
-        <div className="flex flex-col items-center gap-2 mt-5">
-          <button
-            type="button"
-            onClick={() => setIsAdminOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/90 hover:bg-white text-slate-700 text-xs font-bold shadow-md border border-pink-200 transition-all hover:scale-105"
-          >
-            <BarChart3 className="w-3.5 h-3.5 text-pink-600" />
-            <span>📊 View Stored Data & Analytics ({analytics.totalVisits || 0} visits | {analytics.totalDodges || 0} dodges)</span>
-          </button>
-          <p className="text-center text-slate-600 font-medium text-[11px] bg-white/50 backdrop-blur-sm py-0.5 px-2.5 rounded-full">
-            Ready for a fun time outside ✨
-          </p>
-        </div>
+        <p className="text-center text-slate-700 font-medium text-xs mt-6 bg-white/60 backdrop-blur-sm py-1 px-3 rounded-full w-fit mx-auto shadow-sm border border-pink-100">
+          Ready for a fun time outside ✨
+        </p>
       </main>
 
       {/* Admin Modal */}
